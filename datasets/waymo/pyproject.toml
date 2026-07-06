@@ -15,7 +15,7 @@ dependencies = [
     "tqdm",
     "einops",
     "pandas",
-    "protobuf<4",
+    "protobuf<6",
     "numpy<2",
     "av>=17.0.0",
 ]
