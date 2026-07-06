@@ -1,0 +1,80 @@
+eval_only: false
+eval_only_use_mini: false
+
+datasets:
+  dataset_name: "synthetic_bouncing_shapes"
+  train:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/train
+      image_size: 256
+  val:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/evaluation
+      image_size: ${datasets.train.synthetic_bouncing_shapes.image_size}
+  val_mini:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/evaluation
+      image_size: ${datasets.train.synthetic_bouncing_shapes.image_size}
+
+model:
+  model_name: "deterministic_latent_predictor"
+  image_size: ${datasets.train.synthetic_bouncing_shapes.image_size}
+  patch_size: 16
+  backbone:
+    backbone_name: dinov3
+    pretrained_model_name: "facebook/dinov3-vitl16-pretrain-lvd1689m"
+  deterministic_predictor:
+    input_dim: 1024
+    hidden_dim: 1024
+    num_heads: 16
+    num_layers: 4
+    mlp_ratio: 4.0
+    dropout: 0.1
+    copy_last_frame: false
+    use_pos_encoding_at_every_transformer_layer: true
+
+trainer:
+  trainer_type: trainer_deterministic
+  use_dinov3_layer_norm: true
+  average_intermediate_layers: true
+  extract_single_layer: null
+  checkpoint_every: 1
+  number_context_latents: 16
+  number_target_latents: 16
+  training:
+    lr: 2e-4
+    weight_decay: 0.0
+    batch_size_per_gpu: 8
+    epochs: 20
+    warmup_epochs: 0
+    log_freq: 5
+  evaluation:
+    batch_size_per_gpu: 8
+    eval_every: 5
+    eval_first: true
+    do_final_full_evaluation: false
+    heatmap_predictor:
+      cfg_path: configs/dinov3/heatmap/noise/1024/dinov3_vitl16_1024_train_heatmap_predictor_noise_std0p0.yaml
+      checkpoint_path: experiments/dinov3/heatmap/noise/1024/dinov3_vitl16_1024_train_heatmap_predictor_noise_std0p0/checkpoints/epoch_0010.pt
+
+loss:
+  _target_: losses.DeterministicPredictorLoss
+  loss_fn:
+    _target_: torch.nn.L1Loss
+  loss_name: loss_total
+  monitor_loss_fn:
+    _target_: torch.nn.L1Loss
+  monitor_loss_name: l1_latents
+  weight_loss: 1.0
+
+evaluator:
+  _target_: evaluators.evaluator.DeterministicPredictorEvaluator
+  name: deterministic_predictor_evaluator
+
+downstream_loss:
+  _target_: losses.DownstreamLoss
+  loss_fn:
+    _target_: torch.nn.L1Loss
+
+
+seed: 42

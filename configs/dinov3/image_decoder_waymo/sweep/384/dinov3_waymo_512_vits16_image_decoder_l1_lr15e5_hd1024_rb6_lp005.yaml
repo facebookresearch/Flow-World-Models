@@ -1,0 +1,14 @@
+inherits:
+  - ./dinov3_waymo_512_vits16_image_decoder_l1_sweep_base.yaml
+
+model:
+  decoder:
+    hidden_dim: 1024
+    num_res_blocks: 6
+
+trainer:
+  training:
+    lr: 1.5e-4
+
+loss:
+  lpips_weight: 0.05

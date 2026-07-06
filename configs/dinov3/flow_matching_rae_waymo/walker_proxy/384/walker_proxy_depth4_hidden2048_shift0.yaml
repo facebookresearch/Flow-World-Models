@@ -1,0 +1,30 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+trainer:
+  use_mixed_precision: true
+  checkpoint_every: 5
+  training:
+    lr: 1e-3
+    batch_size_per_gpu: 2
+    mixed_precision_dtype: bfloat16
+    detector_loss:
+      enabled: false
+  evaluation:
+    eval_every: 5
+
+transport:
+  params:
+    consistency_loss:
+      enabled: false
+
+misc:
+  time_dist_shift: 1
+
+compile: false
+
+stage_2:
+  params:
+    depth: [4, 0]
+    hidden_size: [2048, 2048]
+    num_heads: [16, 16]

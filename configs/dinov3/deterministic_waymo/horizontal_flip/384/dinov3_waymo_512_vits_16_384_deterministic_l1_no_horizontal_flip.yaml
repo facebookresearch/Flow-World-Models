@@ -1,0 +1,6 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_deterministic_l1_base.yaml
+datasets:
+  train:
+    waymo:
+      horizontal_flip: false

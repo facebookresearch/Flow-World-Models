@@ -1,0 +1,11 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+transport:
+  params:
+    consistency_loss:
+      enabled: true
+      weight: 5
+      type: 'l2'
+      order: 1
+    consistency_loss_use_direct_delta_target: true

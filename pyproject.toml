@@ -1,0 +1,47 @@
+[project]
+name = "flow-world-models"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+  "torch",
+  "torchvision",
+  "transformers==4.56.0",
+  "einops",
+  "tqdm",
+  "wandb",
+  "hydra-core",
+  "av",
+  "scikit-learn",
+  "timm==1.0.20",
+  "pandas",
+  "torchdiffeq",
+  "opencv-python",
+  "imageio>=2.37.3",
+  "huggingface-hub>=0.36.2",
+  "lpips",
+  "fvcore>=0.1.5.post20221221",
+  "iopath<0.1.10",
+  "yacs>=0.1.8",
+  "pycocotools>=2.0.11",
+  "tabulate>=0.10.0",
+  "termcolor>=3.3.0",
+  "torch-fidelity>=0.3.0",
+  "torchmetrics>=1.8.2",
+  "ipykernel",
+  "pip",
+  "ruff",
+  "matplotlib",
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu126", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cu126", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true

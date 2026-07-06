@@ -1,0 +1,39 @@
+datasets:
+  dataset_name: "waymo"
+  train:
+    waymo: 
+      root: "/path/to/datasets/waymococo_f0/training_video_tensors"
+      image_size: 512
+      number_context_latents: 4
+      number_target_latents: 12
+      path_annotations: "/path/to/datasets/waymococo_f0/annotations/instances_train2020.json"
+      resize: false
+      horizontal_flip: true
+      reverse_flip: false
+  val_mini:
+    waymo:
+      root: "/path/to/datasets/waymococo_f0/validation_video_tensors"
+      image_size: ${datasets.train.waymo.image_size}
+      number_context_latents: ${datasets.train.waymo.number_context_latents}
+      number_target_latents: ${datasets.train.waymo.number_target_latents}
+      resize: ${datasets.train.waymo.resize}
+      path_annotations: "/path/to/datasets/waymococo_f0/annotations/instances_val2020.json"
+      horizontal_flip: false
+      reverse_flip: false
+  val:
+    waymo:
+      root: "/path/to/datasets/waymococo_f0/validation_video_tensors"
+      image_size: ${datasets.train.waymo.image_size}
+      number_context_latents: ${datasets.train.waymo.number_context_latents}
+      number_target_latents: ${datasets.train.waymo.number_target_latents}
+      resize: ${datasets.train.waymo.resize}
+      path_annotations: "/path/to/datasets/waymococo_f0/annotations/instances_val2020.json"
+      horizontal_flip: false
+      reverse_flip: false
+
+model:
+  image_size: ${datasets.train.waymo.image_size}
+  patch_size: 16
+  backbone:
+    backbone_name: dinov3
+    pretrained_model_name: "facebook/dinov3-vits16-pretrain-lvd1689m"

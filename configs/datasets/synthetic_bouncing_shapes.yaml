@@ -1,0 +1,7 @@
+datasets:
+  train:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/train
+  val:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/evaluation

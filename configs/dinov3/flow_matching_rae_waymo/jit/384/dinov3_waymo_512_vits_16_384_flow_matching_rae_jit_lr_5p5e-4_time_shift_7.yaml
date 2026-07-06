@@ -1,0 +1,13 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+trainer:
+  training:
+    lr: 5.5e-4
+
+transport:
+  params:
+    predict_x_derive_velocity: true
+
+misc:
+  time_dist_shift: 7.0

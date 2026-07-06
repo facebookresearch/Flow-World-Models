@@ -1,0 +1,29 @@
+generator:
+  train:
+    split: train
+    length: 131072
+    frames: 32
+    fps: 10
+    square_size: 64
+    disk_radius: 24
+    image_size: 256
+    max_speed: 6.0
+    train_ratio: 0.8
+    overfit_single_video: false
+    dataset_seed: 0
+    velocity_bins: 10
+    stochastic_bounces: true
+  evaluation:
+    split: evaluation
+    length: 512
+    frames: ${generator.train.frames}
+    fps: ${generator.train.fps}
+    square_size: ${generator.train.square_size}
+    disk_radius: ${generator.train.disk_radius}
+    image_size: ${generator.train.image_size}
+    max_speed: ${generator.train.max_speed}
+    train_ratio: ${generator.train.train_ratio}
+    velocity_bins: ${generator.train.velocity_bins}
+    overfit_single_video: ${generator.train.overfit_single_video}
+    dataset_seed: ${generator.train.dataset_seed}
+    stochastic_bounces: ${generator.train.stochastic_bounces}

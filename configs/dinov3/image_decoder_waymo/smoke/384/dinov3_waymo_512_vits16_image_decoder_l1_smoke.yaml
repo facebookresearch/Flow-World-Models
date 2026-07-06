@@ -1,0 +1,24 @@
+inherits:
+  - ../../base/384/dinov3_waymo_512_vits16_image_decoder_l1_base.yaml
+
+datasets:
+  train:
+    waymo_image:
+      max_samples: 32
+  val_mini:
+    waymo_image:
+      max_samples: 32
+  val:
+    waymo_image:
+      max_samples: 32
+
+trainer:
+  checkpoint_every: 1
+  training:
+    batch_size_per_gpu: 2
+    epochs: 1
+    log_freq: 1
+  evaluation:
+    batch_size_per_gpu: 2
+    save_num_images: 8
+    compute_fid: false

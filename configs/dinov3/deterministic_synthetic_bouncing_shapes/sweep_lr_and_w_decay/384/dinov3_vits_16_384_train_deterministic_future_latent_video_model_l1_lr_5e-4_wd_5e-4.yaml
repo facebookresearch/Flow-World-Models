@@ -1,0 +1,7 @@
+inherits:
+  - ../../base/384/dinov3_vits_16_384_train_deterministic_future_latent_video_model_l1_base.yaml
+
+trainer:
+  training:
+    lr: 5e-4
+    weight_decay: 5e-4

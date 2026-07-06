@@ -1,0 +1,79 @@
+datasets:
+  dataset_name: "waymo_image"
+  train:
+    waymo_image:
+      root: "/path/to/datasets/waymococo_f0/train2020"
+      image_size: 512
+      horizontal_flip: true
+      max_samples: null
+      subset_seed: 42
+  val_mini:
+    waymo_image:
+      root: "/path/to/datasets/waymococo_f0/val2020"
+      image_size: ${datasets.train.waymo_image.image_size}
+      horizontal_flip: false
+      max_samples: 10000
+      subset_seed: 42
+  val:
+    waymo_image:
+      root: "/path/to/datasets/waymococo_f0/val2020"
+      image_size: ${datasets.train.waymo_image.image_size}
+      horizontal_flip: false
+      max_samples: null
+      subset_seed: 42
+
+model:
+  model_name: "dinov3_image_decoder"
+  image_size: ${datasets.train.waymo_image.image_size}
+  patch_size: 16
+  backbone:
+    backbone_name: dinov3
+    pretrained_model_name: "facebook/dinov3-vits16-pretrain-lvd1689m"
+  decoder:
+    input_dim: 384
+    hidden_dim: 768
+    num_res_blocks: 6
+    dropout: 0.0
+    num_groups: 32
+    upsample_channels: [512, 256, 128, 64]
+
+trainer:
+  trainer_type: trainer_image_reconstruction
+  use_mixed_precision: true
+  average_intermediate_layers: true
+  extract_single_layer: null
+  use_dinov3_layer_norm: true
+  checkpoint_every: 5
+  training:
+    lr: 1e-4
+    warmup_epochs: 2
+    weight_decay: 0.05
+    batch_size_per_gpu: 32
+    mixed_precision_dtype: "bfloat16"
+    epochs: 50
+    log_freq: 20
+    gradient_clipping: true
+    gradient_clipping_max_norm: 1.0
+  evaluation:
+    batch_size_per_gpu: 32
+    eval_every: 1
+    eval_first: true
+    do_final_full_evaluation: false
+    save_num_images: 16
+    compute_fid: true
+    compute_ssim: false
+    fid_real_stats_path: "data/fid/dinov3_waymo_512_vits16_val_mini_10000_real_stats.pt"
+
+loss:
+  _target_: losses.ImageReconstructionLoss
+  l1_weight: 1.0
+  lpips_weight: 0.0
+  lpips_net: "alex"
+
+evaluator:
+  _target_: evaluators.ImageReconstructionEvaluator
+
+seed: 42
+compile: false
+eval_only: false
+eval_only_use_mini: false

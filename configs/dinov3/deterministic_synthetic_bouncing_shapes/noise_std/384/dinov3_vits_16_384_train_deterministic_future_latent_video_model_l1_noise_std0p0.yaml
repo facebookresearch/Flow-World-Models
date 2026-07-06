@@ -1,0 +1,8 @@
+inherits:
+  - ../../base/384/dinov3_vits_16_384_train_deterministic_future_latent_video_model_l1_base.yaml
+
+trainer:
+  evaluation:
+    heatmap_predictor:
+      cfg_path: configs/dinov3/heatmap/noise/384/dinov3_vits16_384_train_heatmap_predictor_noise_std0p0.yaml
+      checkpoint_path: experiments/dinov3_vits16_384_train_heatmap_predictor_noise_std0p0/checkpoints/epoch_0010.pt

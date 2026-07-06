@@ -1,0 +1,6 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+stage_2:
+  params:
+    hidden_size: [256, 1024]

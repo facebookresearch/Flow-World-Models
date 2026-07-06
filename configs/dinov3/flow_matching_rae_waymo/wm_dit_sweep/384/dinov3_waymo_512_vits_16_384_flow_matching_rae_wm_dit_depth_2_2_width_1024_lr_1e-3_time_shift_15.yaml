@@ -1,0 +1,14 @@
+inherits:
+  - ./dinov3_waymo_512_vits_16_384_flow_matching_rae_wm_dit_base_with_eval_decoder_no_normalization.yaml
+
+trainer:
+  training:
+    lr: 1e-3
+
+stage_2:
+  params:
+    depth: [2, 2]
+    hidden_size: [256, 1024]
+
+misc:
+  time_dist_shift: 15
