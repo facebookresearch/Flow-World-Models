@@ -1,0 +1,6 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+datasets:
+  train:
+    waymo:
+      time_reverse_flip: true

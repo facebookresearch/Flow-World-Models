@@ -1,0 +1,6 @@
+inherits:
+  - ../../base/384/dinov3_waymo_512_vits16_image_decoder_l1_base.yaml
+
+trainer:
+  evaluation:
+    eval_first: false

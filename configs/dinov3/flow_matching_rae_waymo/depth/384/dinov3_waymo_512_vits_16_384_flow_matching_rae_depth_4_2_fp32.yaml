@@ -1,0 +1,13 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+trainer:
+  use_mixed_precision: false
+  training:
+    batch_size_per_gpu: 1
+  evaluation:
+    batch_size_per_gpu: 1
+
+stage_2:
+  params:
+    depth: [4, 2]

@@ -1,0 +1,32 @@
+# Isolated environment for the Waymo -> WaymoCOCO converter.
+#
+# Kept separate from the root FlowWM project on purpose: the vendored Waymo protos
+# require protobuf<4 (older TF), which conflicts with the modern protobuf the training
+# stack resolves to. Run data prep from this directory with its own `uv sync`.
+[project]
+name = "waymococo-converter"
+version = "0.1.0"
+description = "Waymo Open Dataset -> WaymoCOCO converter (isolated env for FlowWM data prep)"
+requires-python = ">=3.10"
+dependencies = [
+    "tensorflow",
+    "torch",
+    "torchvision",
+    "tqdm",
+    "einops",
+    "pandas",
+    "protobuf<4",
+    "numpy<2",
+    "av>=17.0.0",
+]
+
+# CPU-only torch: the converter just resizes clips, so no CUDA is needed and this
+# avoids any torch/TF CUDA-library clash.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }

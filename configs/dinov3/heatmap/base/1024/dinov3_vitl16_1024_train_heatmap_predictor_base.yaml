@@ -1,0 +1,76 @@
+eval_only: false
+eval_only_use_mini: false
+
+datasets:
+  dataset_name: "synthetic_bouncing_shapes"
+  train:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/train
+      image_size: 256
+  val:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/evaluation
+      image_size: ${datasets.train.synthetic_bouncing_shapes.image_size}
+  val_mini:
+    synthetic_bouncing_shapes:
+      root: /path/to/datasets/SyntheticBouncingShapes/evaluation
+      image_size: ${datasets.train.synthetic_bouncing_shapes.image_size}
+
+trainer:
+  trainer_type: trainer_heatmap
+  use_dinov3_layer_norm: true
+  average_intermediate_layers: true
+  extract_single_layer: null
+  checkpoint_every: 1
+  number_context_latents: 16
+  number_target_latents: 16
+  training:
+    lr: 1e-3
+    weight_decay: 1e-3
+    batch_size_per_gpu: 1
+    epochs: 10
+    warmup_epochs: 0
+    log_freq: 20
+    noise_backbone_latents: true
+    noise_backbone_latents_std: 0.0
+    gradient_clipping: true
+    gradient_clipping_max_norm: 1.0
+  evaluation:
+    batch_size_per_gpu: 1
+    eval_every: 1
+    eval_first: true
+    do_final_full_evaluation: false
+
+model:
+  model_name: "heatmap_latent_predictor"
+  image_size: ${datasets.train.synthetic_bouncing_shapes.image_size}
+  patch_size: 16
+  backbone:
+    backbone_name: dinov3
+    pretrained_model_name: "facebook/dinov3-vitl16-pretrain-lvd1689m"
+  heatmap_pixel_predictor:
+    input_dim: 1024
+    hidden_dim: 256
+    patch_size: 16
+    dropout: 0.1
+  heatmap_patch_predictor:
+    input_dim: 1024
+    hidden_dim: 256
+    dropout: 0.1
+
+loss:
+  _target_: losses.HeatmapLoss
+  downstream_loss_fn:
+    _target_: torch.nn.L1Loss
+  heatmap_loss_patch:
+    _target_: losses.HeatmapLossPatch
+    loss_fn:
+      _target_: torch.nn.CrossEntropyLoss
+    weight_loss: 1.0
+  heatmap_loss_pixel:
+    _target_: losses.HeatmapLossPixel
+    loss_fn:
+      _target_: torch.nn.CrossEntropyLoss
+    weight_loss: 1.0
+
+seed: 42

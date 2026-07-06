@@ -1,0 +1,16 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+trainer:
+  checkpoint_path: "./experiments/dinov3/flow_matching_rae_waymo/time_dist_shift/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_time_dist_shift_13_fp32/checkpoints/epoch_0180.pt"
+  training:
+    lr: 5e-5
+    warmup_epochs: 5
+    epochs: 50
+    detector_loss:
+      enabled: true
+      weight: 0.005
+      time_weighting: None
+  evaluation:
+    eval_first: true
+    eval_every: 10

@@ -1,0 +1,75 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments and local configuration
+.venv/
+venv/
+env/
+.env
+*.env
+sandbox.py
+
+# IDE settings and editor metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+AGENTS.md
+CLAUDE.md
+.llms/
+
+# Experiment outputs, checkpoints, and logs
+experiments/
+checkpoints/
+logs/
+outputs/
+runs/
+data/
+figures/
+*.ckpt
+*.ckpt.*
+*.pth
+*.pt
+*.bin
+*.weights
+*.onnx
+*.pb
+*.h5
+*.hdf5
+*.tfrecord
+*.joblib
+*.pkl
+*.pickle
+
+# Tensor and array artifacts
+*.tensor
+*.npy
+*.npz
+*.np
+
+# Miscellaneous runtime artifacts
+*.log
+*.out
+*.err
+
+# Notebooks and checkpoints
+notebooks/
+.ipynb_checkpoints/
+
+# Packaging and build artifacts
+*.egg
+*.egg-info/
+dist/
+build/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Local symlinks
+phd
+
+# Ignore Weights & Biases runs
+wandb/

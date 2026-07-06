@@ -1,0 +1,12 @@
+inherits:
+  - ./dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+trainer:
+  training:
+    batch_size_per_gpu: 1
+
+evaluation_decoder:
+  cfg_path: "./configs/dinov3/image_decoder_waymo/sweep/384/dinov3_waymo_512_vits16_image_decoder_l1_lr15e5_hd1024_rb8_lp01.yaml"
+  checkpoint_path: "./experiments/dinov3/image_decoder_waymo/sweep/384/dinov3_waymo_512_vits16_image_decoder_l1_lr15e5_hd1024_rb8_lp01/checkpoints/epoch_0040.pt"
+  save_decoded_videos: true
+  fps: 10

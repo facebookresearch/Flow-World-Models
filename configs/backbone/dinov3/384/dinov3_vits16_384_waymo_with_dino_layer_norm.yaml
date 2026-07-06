@@ -1,0 +1,4 @@
+inherits:
+  - dinov3_vits16_384_waymo.yaml
+
+use_dinov3_layer_norm: true

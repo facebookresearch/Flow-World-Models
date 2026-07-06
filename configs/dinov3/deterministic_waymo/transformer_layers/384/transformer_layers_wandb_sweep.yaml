@@ -1,0 +1,18 @@
+project: FlowWM
+name: dinov3_deterministic_waymo_transformer_layers
+method: grid
+metric:
+  name: eval/coco/ap
+  goal: maximize
+parameters:
+  model.deterministic_predictor.num_layers:
+    values: [4, 6, 8]
+
+command:
+  - python
+  - -m
+  - torch.distributed.run
+  - --nproc_per_node=1
+  - main.py
+  - --cfg_path
+  - configs/dinov3/deterministic_waymo/base/384/dinov3_waymo_512_vits_16_384_deterministic_l1_base.yaml

@@ -1,0 +1,6 @@
+inherits:
+  - ../../base/384/dinov3_vits16_384_train_heatmap_predictor_base.yaml
+
+trainer:
+  training:
+    noise_backbone_latents_std: 0.1

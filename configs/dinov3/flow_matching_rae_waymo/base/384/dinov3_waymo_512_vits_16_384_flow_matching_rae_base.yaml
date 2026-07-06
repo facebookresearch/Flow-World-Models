@@ -1,0 +1,172 @@
+datasets:
+  dataset_name: "waymo"
+  train:
+    waymo:
+      root: "/path/to/datasets/waymococo_f0/training_video_tensors"
+      image_size: 512
+      number_context_latents: 4
+      number_target_latents: 12
+      path_annotations: "/path/to/datasets/waymococo_f0/annotations/instances_train2020.json"
+      resize: false
+      horizontal_flip: true
+      reverse_flip: false
+  val_mini:
+    waymo:
+      root: "/path/to/datasets/waymococo_f0/validation_video_tensors"
+      image_size: ${datasets.train.waymo.image_size}
+      number_context_latents: ${datasets.train.waymo.number_context_latents}
+      number_target_latents: ${datasets.train.waymo.number_target_latents}
+      resize: ${datasets.train.waymo.resize}
+      path_annotations: "/path/to/datasets/waymococo_f0/annotations/instances_val2020.json"
+      horizontal_flip: false
+      reverse_flip: false
+  val:
+    waymo:
+      root: "/path/to/datasets/waymococo_f0/validation_video_tensors"
+      image_size: ${datasets.train.waymo.image_size}
+      number_context_latents: ${datasets.train.waymo.number_context_latents}
+      number_target_latents: ${datasets.train.waymo.number_target_latents}
+      resize: ${datasets.train.waymo.resize}
+      path_annotations: "/path/to/datasets/waymococo_f0/annotations/instances_val2020.json"
+      horizontal_flip: false
+      reverse_flip: false
+
+trainer:
+  trainer_type: trainer_flow_matching
+  n_predictions_for_evaluation: 3
+  use_mixed_precision: false
+  use_dinov3_layer_norm: True
+  average_intermediate_layers: true
+  extract_single_layer: null
+  checkpoint_every: 60
+  number_context_latents: ${datasets.train.waymo.number_context_latents}
+  number_target_latents: ${datasets.train.waymo.number_target_latents}
+  training:
+    lr: 1e-3
+    warmup_epochs: 10
+    weight_decay: 0.0000
+    batch_size_per_gpu: 1
+    epochs: 180
+    log_freq: 5
+    use_bptt: false
+    ema_decay: null
+    gradient_clipping: true
+    gradient_clipping_max_norm: 0.6
+    detector_loss:
+      enabled: false
+      weight: 1.0
+      time_weighting: "none"
+  evaluation:
+    batch_size_per_gpu: 1
+    eval_every: ${trainer.checkpoint_every}
+    eval_first: false
+    do_final_full_evaluation: false
+  likelihood:
+    compute_likelihood: false
+    exact_divergence: false
+    n_acc: 10
+
+loss:
+  _target_: losses.FlowMatchingLoss
+  loss_fn:
+    _target_: torch.nn.MSELoss
+  monitor_loss_fn:
+    _target_: torch.nn.L1Loss
+    reduction: "none"
+  weight_loss: 1.0
+
+transport:
+  params:
+    path_type: 'Linear'
+    prediction: 'velocity'
+    loss_weight: null
+    loss_norm: 'l2'
+    time_dist_type: 'uniform'
+    consistency_loss:
+      enabled: false
+      weight: 0.1
+      type: 'l2'
+      order: 1
+      enforce_context_consistency: false
+    gram_anchoring_loss:
+      enabled: false
+      weight_loss: 1.0
+      loss_type: 'l2'
+      temporal: false
+      time_weighting: 'linear'
+      tau_min: 0.0
+      tau_max: 1.0
+    noise_std: 1.0
+    consistency_loss_use_direct_delta_target: false
+    predict_x_derive_velocity: false
+
+sampler:
+  mode: ODE
+  params:
+    sampling_method: 'euler'
+    num_steps: 50
+    atol: 1.0e-6
+    rtol: 1.0e-3
+    reverse: false # this is to specify diffusion or flow matching convention for time direction
+
+guidance:
+  method: 'cfg'
+  scale: 1.0
+  t_min: 0.0
+  t_max: 1.0
+
+misc:
+  latent_size: [768, 16, 16] # [C, H, W]
+  time_dist_shift: 13 # Important parameter for the time transformation in flow matching
+
+
+model:
+  model_name: "FlowMatchingVideoLatentPredictorRAE"
+  image_size: 512
+  patch_size: 16
+  backbone:
+    backbone_name: dinov3
+    pretrained_model_name: "facebook/dinov3-vits16-pretrain-lvd1689m"
+
+stage_2:
+  target: models.DDT.DiTwDDTHead
+  params:
+    input_size: ${datasets.train.waymo.number_context_latents}
+    noise_input_size: ${datasets.train.waymo.number_target_latents}
+    spatial_dimension: ${datasets.train.waymo.image_size}
+    patch_size: 1
+    in_channels: 384
+    hidden_size: [256, 1024]
+    depth: [2, 2]
+    num_heads: [8, 16]
+    mlp_ratio: 4.0
+    class_dropout_prob: 0.1
+    use_qknorm: true
+    use_swiglu: true
+    use_rope: false
+    use_rmsnorm: true
+    wo_shift: false
+    use_pos_embed: true
+    pos_embed_mode: 'sincos_learnable'
+
+
+evaluator_mini:
+  _target_: evaluators.evaluator.FlowMatchingEvaluatorWaymoFastV2
+  validate_mini_set: true
+
+evaluator:
+  _target_: evaluators.evaluator.FlowMatchingEvaluatorWaymoFastV2
+  validate_mini_set: false
+
+evaluation_detection:
+  path_annotations_eval_mini: ${datasets.val_mini.waymo.path_annotations}
+  path_annotations_eval: ${datasets.val.waymo.path_annotations}
+  val_img_path: "/path/to/datasets/waymococo_f0/val2020"
+  model_cfg_path: "/path/to/detrex/projects/dino/configs/models/dino_vitdet_dinov3_multi_layer_pooler_512_w_layer_norm.py"
+  checkpoint_path: "/path/to/checkpoints/detectors/dinov3_multi_layer_pooler_w_layer_norm/model_final.pth"
+
+
+seed: 42
+compile: false
+eval_only: false
+eval_only_use_mini: false

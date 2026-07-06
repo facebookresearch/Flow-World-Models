@@ -1,0 +1,8 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_flow_matching_rae_base.yaml
+
+trainer:
+  training:
+    use_bptt: true
+  evaluation:
+    eval_first: false

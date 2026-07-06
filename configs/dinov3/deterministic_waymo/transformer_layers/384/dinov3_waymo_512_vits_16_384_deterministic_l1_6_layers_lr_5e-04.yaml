@@ -1,0 +1,8 @@
+inherits:
+- ../../base/384/dinov3_waymo_512_vits_16_384_deterministic_l1_base.yaml
+model:
+  deterministic_predictor:
+    num_layers: 6
+trainer:
+  training:
+    lr: 0.0005
