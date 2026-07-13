@@ -5,7 +5,7 @@ requires-python = ">=3.10"
 dependencies = [
   "torch",
   "torchvision",
-  "transformers==4.56.0",
+  "transformers==5.5.0",
   "einops",
   "tqdm",
   "wandb",
